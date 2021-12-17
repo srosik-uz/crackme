@@ -1,0 +1,73 @@
+html {
+  background: #222;
+  color: #fff;
+  font-family: monospace;
+}
+
+input {
+  border: 0;
+  background: #fff;
+  color: #222;
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
+label {
+  margin-right: 10px;
+  font-weight: bold;
+  color: rgb(158, 247, 161);
+}
+
+button,
+input[type=submit] {
+  background: rgb(158, 247, 161);
+  color: rgb(46, 110, 48);
+  border: 0;
+}
+
+button,
+button:hover,
+input[type=submit]:hover {
+  background: rgb(95, 200, 99);
+  color: rgb(39, 98, 41);
+}
+
+button:active,
+button:focus,
+input[type=submit]:active,
+input[type=submit]:focus {
+  background: rgb(58, 140, 61);
+  color: #fff;
+}
+
+.error {
+  color: rgb(172, 14, 14);
+  background-color: rgb(255, 136, 105);
+  padding: 10px;
+  opacity: 0;
+  transition: opacity 0.3s ease-in;
+}
+
+.error.visible {
+  opacity: 1;
+}
+
+#intro {
+  width: calc(50% - 30px);
+  float: left;
+  margin-right: 30px;
+}
+
+#output {
+  width: calc(32px * 4);
+  height: calc(32px * 4);
+  border: 4px solid rgb(30, 173, 7);
+}
+
+#output.wrong {
+  border: 4px solid rgb(173, 7, 7);
+}
+
+#legend {
+  color: #777;
+}

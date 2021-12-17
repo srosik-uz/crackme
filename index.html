@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Don't look at it...</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="sha256.min.js"></script>
+  </head>
+  <body>
+    <form class="c">
+      <h1>CrackMe</h1>
+      <p>Pleas enter a valid password to access CrackMe content.</p>
+      <p>
+        <label for="pass">Password:</label><input type="password" id="pass" name="pass"/> <input type="submit"/>
+      </p>
+      <p id="wrongpass" class="error">Nope :)</p>
+      <p>
+        <img src="cat.jpg"/>
+      </p>
+    </form>
+    <script>
+      window.A = 11;
+      window.B = 8;
+
+      var form  = document.querySelector('form');
+      var input = document.querySelector('input[name="pass"]');
+      var error = document.querySelector('#wrongpass');
+      var conv, getPass, getJSClass, getChar, tid;
+
+      !function () {
+
+        const KEY   = "bmFzc2Jzcw==";
+        const HASH  = "aaff6f579e5125ce8c8824b9dbc4c2bec20727f0558b914bd6ee910e1b3348ce";
+
+        conv = function (value) {
+          switch((value||'').toString().charCodeAt(0)) {
+            case 97:
+              return Array;
+            case 98:
+              return Boolean;
+            case 101:
+              return Error;
+            case 110:
+              return Number;
+            case 111:
+              return Object;
+            case 115:
+              return String;
+          }
+        }
+
+        getJSClass = function (index) {
+          return atob(KEY).split('').map(conv)[index];
+        }
+
+        getChar = function (charAorB, index) {
+          var JSClass = getJSClass(index);
+          if (JSClass) {
+            return Object.prototype.toString.call(new JSClass)[window[charAorB]] || '?';
+          }
+          return '?';
+        }
+
+        getPass = function () {
+          var pass = input.value.toUpperCase();
+          if (pass.length === 7) {
+            return pass.split('').map(getChar).join('');
+          }
+          return '???????';
+        }
+
+        form.addEventListener('submit', function (e) {
+          e.preventDefault();
+          password = getPass().toLowerCase();
+          if (sha256(password) === HASH) {
+            console.info('Valid password: %s', password);
+            alert('Success!');
+            location.href = password + "k.html";
+          } else {
+            error.classList.add('visible');
+            clearTimeout(tid);
+            tid = setTimeout(function () {
+              error.classList.remove('visible');
+            }, 1500);
+            console.warn('Wrong password: %s', password);
+          }
+        });
+      }();
+    </script>
+  </body>
+</html>

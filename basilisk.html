@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="XORCipher.js"></script>
+    <title>Behold, The Basilisk</title>
+  </head>
+  <body>
+    <article id="intro">
+      <h1>CrackMe</h1>
+      <p>Welcome to our small CrackMe. To win Gynvael's Coldwind new book, pleas send the decoded image (single frame will do) to <a href="mailto:kontakt@rst.com.pl?Subject=CrackMe">us</a> with the title "CrackMe". glhf :)</p>
+
+      <p id="legend">A legend says that in the basements of the buildings located at the Old Town lives a Basilisk. It guarded the treasures once stored there, and every man who tried to reach them was killed by the gaze of the Basilisk, which turns men to stone. He was defeated in the end by a wandering tailor who showed the monster a mirror. The Basilisk was petrified by its own appearance, and hid away; from then on, he was no longer a threat to residents. Today on the façade of the building there is a sign of the Basilisk, which is the symbol of the renowned Warsaw restaurant of the same name.</p>
+    </article>
+    <form id="imageDecoder">
+      <h1>Decoder</h1>
+      <p>
+        <label for="p1">pass 1</label> <input value="" id="p1"/>
+      </p>
+      <p>
+        <label for="p2">pass 2</label> <input value="" id="p2"/>
+      </p>
+      <p>
+        <label for="p3">pass 3</label> <input value="" id="p3"/>
+      </p>
+      <p>
+        <label for="p4">pass 4</label> <input value="" id="p4"/>
+      </p>
+      <p>
+        <button>Decode</button>
+      <p>
+      <canvas id="output" class="wrong"></canvas>
+    </form>
+    <script src="basilisk.js"></script>
+    <script>
+      const C_SIZE = 32;
+      const SECRET1 = "NkkCAQgSQABFEA4dGkBJaC8AUUUBEAAHVBoOF1sHDlVhABgXHkUVRABTQR0WTUFKJEQoBBMETlkAAAQVFXVeGm9WDQkSADNMQhISEB9HXUVtABxWSRMPCFUWSFkPUg51HBtMRRpFDQVUEAlRFgcOVWEATEUDAA0LRBYFPRJaTw58ADc4XEVOGQBTAg0LHABNLUUNFzUADRAIQ01ZQwIObR5zJT8iSU4nfyAoIzYHFQ5hSQpFTz0hNmMaEREWXABLL0MDAQJNCgtDBgwcHVoAWihUAABLRQkBTjgEAFsHBw58HVFFNCAtNmUnU1BTVQ4OYQAVBAYEF0wJSEFZDg5LQjJFTB5HRU5EQhwOFhwGBxVhABEY";
+      const SECRET2 = "NhcdClZHQEUzDQtEeAMHBg1TFw4hCgwKJQlNRzE=";
+
+      var frame = 0;
+      var key, ctx1, ctx2;
+      var decodedData = [];
+      var decodingFn = function () {};
+
+      function decodeImage(code, method){
+        var value;
+        try {
+          value = window[method](code).split('');
+        } catch(e) {}
+        return value;
+      }
+
+      function init() {
+          var canvas1 = document.createElement('canvas');
+          var canvas2 = document.querySelector('#output')
+          ctx1 = canvas1.getContext('2d');
+          ctx2 = canvas2.getContext('2d');
+          canvas1.width = canvas1.height = canvas2.width = canvas2.height = C_SIZE;
+          (function renderLoop() {
+            drawFrame(frame++);
+            setTimeout(renderLoop, 150);
+          })();
+          document.querySelector('form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            runDecoding();
+          });
+      }
+
+      function createDecodingFn() {
+        try {
+          eval(XORCipher.decode(document.querySelector(p2.value).innerText.substr(0,13) + '...', SECRET1));
+        } catch(e) {
+          window.decodingFn = function () {}
+        }
+      }
+
+      function runDecoding() {
+        createDecodingFn();
+        decodingFn();
+      }
+
+      function yaaay() {
+        document.querySelector('#output').classList.remove('wrong');
+      }
+
+      function boooo() {
+        document.querySelector('#output').classList.add('wrong');
+      }
+
+      function genKey() {
+        if (!arguments.length) {
+          return [arguments.length === 0, p2.value, p3.value, p4.value].join(':');
+        }
+      }
+
+      function getValue(pixel, frame) {
+        var index = pixel + C_SIZE * C_SIZE * frame;
+        var value = decodedData[index];
+        if (value === undefined) {
+          value = Math.random();
+        }
+        return value;
+      }
+
+      function drawFrame(frame) {
+        var image = ctx1.getImageData(0, 0, C_SIZE, C_SIZE);
+        var value = 0;
+
+        for(var i = 0, n = image.data.length; i < n; i += 4) {
+          value = getValue(i / 4, frame % 6) * 255;
+          image.data[i + 0] = image.data[i + 1] = image.data[i + 2] = value;
+          image.data[i + 3] = 255;
+        }
+        ctx1.putImageData(image, 0, 0);
+        ctx2.globalAlpha = +p1.value || 0;
+        ctx2.globalCompositeOperation = "lighter";
+        ctx2.drawImage(ctx1.canvas, 0, 0);
+      }
+
+      init();
+    </script>
+  </body>
+</html>
